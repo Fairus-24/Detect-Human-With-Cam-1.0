@@ -28,7 +28,8 @@ body {
     width: 150px;
     height: 150px;
     top: 10%;
-    left: 20%;animation-delay: 0s;
+    left: 20%;
+    animation-delay: 0s;
 }
 
 .background::after {
@@ -47,6 +48,8 @@ body {
 .container {
     text-align: center;
     width: 80vh;
+    max-width: 100%;
+    padding: 20px;
 }
 
 h1 {
@@ -73,7 +76,7 @@ h1 {
 
 .img-container img {
     width: 100%;
-    height: 500px;
+    height: auto;
     border-radius: 10px;
     border: 2px solid #ddd;
 }
@@ -97,22 +100,67 @@ h1 {
     color: #ffffff;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Responsive adjustments */
+
+/* Untuk Tablet (max-width: 1024px) */
+@media (max-width: 1024px) {
     .card {
         flex-direction: column;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .img-container {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .message {
+        width: 100%;
+        text-align: center;
+        border-left: none;
+        padding-left: 0;
+        border-top: 2px solid #eee;
+        padding-top: 20px;
+    }
+}
+
+/* Untuk Handphone (max-width: 768px) */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+
+    .card {
+        flex-direction: column;
+        padding: 10px;
     }
 
     .img-container, .message {
         width: 100%;
         margin: 0;
-        padding: 0;
+    }
+
+    .img-container img {
+        height: auto;
     }
 
     .message {
-        padding-left: 0;
-        border-left: none;
-        border-top: 2px solid #eee;
-        padding-top: 20px;
+        padding: 10px;
+    }
+}
+
+/* Untuk layar sangat kecil (max-width: 480px) */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .message p {
+        font-size: 0.9em;
+    }
+
+    .card {
+        padding: 8px;
     }
 }
