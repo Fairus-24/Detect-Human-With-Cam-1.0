@@ -60,44 +60,60 @@
     const detectedInfo = document.getElementById('detectedInfo');
     let poseNetModel, faceApiModel;
 
+    // Setup webcam
     async function setupWebcam() {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-      });
-      video.srcObject = stream;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
+        video.srcObject = stream;
 
-      video.onloadedmetadata = () => {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        detectPoseAndFace();
-      };
+        video.onloadedmetadata = () => {
+          console.log("Webcam loaded successfully");
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          detectPoseAndFace();
+        };
+      } catch (err) {
+        console.error("Error accessing webcam: ", err);
+        detectedInfo.textContent = "Unable to access the camera.";
+      }
     }
 
-    // Load PoseNet for detecting body pose
+    // Load PoseNet model for pose detection
     async function loadPoseNet() {
-      poseNetModel = await posenet.load();
-      detectedInfo.textContent = 'PoseNet model loaded. Waiting for pose detection...';
+      try {
+        poseNetModel = await posenet.load();
+        detectedInfo.textContent = 'PoseNet model loaded. Waiting for pose detection...';
+      } catch (err) {
+        console.error("Error loading PoseNet: ", err);
+        detectedInfo.textContent = 'Error loading PoseNet model.';
+      }
     }
 
-    // Load FaceAPI for age, gender, and face detection
+    // Load FaceAPI for face detection and analysis
     async function loadFaceApi() {
-      await faceapi.nets.ssdMobilenetv1.loadFromUri('/models');
-      await faceapi.nets.ageGenderNet.loadFromUri('/models');
-      detectedInfo.textContent = 'FaceAPI model loaded. Waiting for face detection...';
+      try {
+        await faceapi.nets.ssdMobilenetv1.loadFromUri('/models');
+        await faceapi.nets.ageGenderNet.loadFromUri('/models');
+        detectedInfo.textContent = 'FaceAPI model loaded. Waiting for face detection...';
+      } catch (err) {
+        console.error("Error loading FaceAPI: ", err);
+        detectedInfo.textContent = 'Error loading FaceAPI model.';
+      }
     }
 
-    // Detect pose and face
+    // Detect Pose and Face in real-time
     async function detectPoseAndFace() {
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      // Detect pose with PoseNet
+      // Detect body pose using PoseNet
       const pose = await poseNetModel.estimateSinglePose(video, {
         flipHorizontal: false,
       });
-
       drawKeypoints(pose.keypoints);
 
-      // Detect face and analyze age, gender with FaceAPI
+      // Detect face and analyze age, gender using FaceAPI
       const detections = await faceapi.detectAllFaces(video).withFaceLandmarks().withAgeAndGender();
 
       detections.forEach((detection) => {
@@ -111,7 +127,7 @@
         context.fillText(`${gender}, ${Math.round(age)} years`, detection.detection.box.x, detection.detection.box.y - 5);
       });
 
-      // Display detected information (example of age and gender)
+      // Display information about the detected face
       if (detections.length > 0) {
         const { age, gender } = detections[0];
         detectedInfo.textContent = `Detected Age: ${Math.round(age)} years, Gender: ${gender}`;
@@ -122,7 +138,7 @@
       requestAnimationFrame(detectPoseAndFace);
     }
 
-    // Draw keypoints for the pose
+    // Draw keypoints of the detected pose
     function drawKeypoints(keypoints) {
       keypoints.forEach((keypoint) => {
         if (keypoint.score > 0.5) {
@@ -134,7 +150,7 @@
       });
     }
 
-    // Initialize the models
+    // Initialize the models and start the webcam
     async function init() {
       await loadPoseNet();
       await loadFaceApi();
