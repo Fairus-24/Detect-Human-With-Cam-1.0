@@ -1,33 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Simple Birthday Page</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Human Pose and Analysis</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+      flex-direction: column;
+    }
+    #webcam {
+      border: 2px solid black;
+      width: 80%;
+      max-width: 640px;
+      margin-bottom: 20px;
+    }
+    #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    h1 {
+      font-size: 24px;
+    }
+    .detected-info {
+      font-size: 18px;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border-radius: 5px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-    <div class="background">
-    <div class="container">
-        <div class="card">
-            <div class="img-container">
-                <img src="Img/hbd.jpg" alt="Birthday Balloons">
-            </div>
-            <div class="message">
-                <h1>Happy Birthday!</h1>
-                <p>Dear Friend,</p>
-                <p>
-                    On this special day, I wanted to take a moment to celebrate you and all the wonderful qualities that make you so amazing. Your kindness, humor, and genuine heart bring so much joy to everyone around you.
-                </p>
-                <p>
-                    Wishing you a birthday as bright and beautiful as you are, Here's to many more wonderful years ahead!
-                </p>
-                <p>With lots of love and warm wishes,</p>
-                <p class="signature">Muhammad Fairus Fawas Afanza</p>
-            </div>
-        </div>
-    </div>
-    </div>
+  <h1>Human Pose and Analysis</h1>
+  <video id="webcam" autoplay></video>
+  <canvas id="canvas"></canvas>
+  <div class="detected-info" id="detectedInfo">Loading model...</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+
+  <script>
+    const video = document.getElementById('webcam');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    const detectedInfo = document.getElementById('detectedInfo');
+    let poseNetModel, faceApiModel;
+
+    async function setupWebcam() {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
+      video.srcObject = stream;
+
+      video.onloadedmetadata = () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        detectPoseAndFace();
+      };
+    }
+
+    // Load PoseNet for detecting body pose
+    async function loadPoseNet() {
+      poseNetModel = await posenet.load();
+      detectedInfo.textContent = 'PoseNet model loaded. Waiting for pose detection...';
+    }
+
+    // Load FaceAPI for age, gender, and face detection
+    async function loadFaceApi() {
+      await faceapi.nets.ssdMobilenetv1.loadFromUri('/models');
+      await faceapi.nets.ageGenderNet.loadFromUri('/models');
+      detectedInfo.textContent = 'FaceAPI model loaded. Waiting for face detection...';
+    }
+
+    // Detect pose and face
+    async function detectPoseAndFace() {
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Detect pose with PoseNet
+      const pose = await poseNetModel.estimateSinglePose(video, {
+        flipHorizontal: false,
+      });
+
+      drawKeypoints(pose.keypoints);
+
+      // Detect face and analyze age, gender with FaceAPI
+      const detections = await faceapi.detectAllFaces(video).withFaceLandmarks().withAgeAndGender();
+
+      detections.forEach((detection) => {
+        const { age, gender } = detection;
+        context.beginPath();
+        context.rect(detection.detection.box.x, detection.detection.box.y, detection.detection.box.width, detection.detection.box.height);
+        context.lineWidth = 2;
+        context.strokeStyle = 'green';
+        context.stroke();
+        context.fillStyle = 'green';
+        context.fillText(`${gender}, ${Math.round(age)} years`, detection.detection.box.x, detection.detection.box.y - 5);
+      });
+
+      // Display detected information (example of age and gender)
+      if (detections.length > 0) {
+        const { age, gender } = detections[0];
+        detectedInfo.textContent = `Detected Age: ${Math.round(age)} years, Gender: ${gender}`;
+      } else {
+        detectedInfo.textContent = 'No face detected.';
+      }
+
+      requestAnimationFrame(detectPoseAndFace);
+    }
+
+    // Draw keypoints for the pose
+    function drawKeypoints(keypoints) {
+      keypoints.forEach((keypoint) => {
+        if (keypoint.score > 0.5) {
+          context.beginPath();
+          context.arc(keypoint.position.x, keypoint.position.y, 5, 0, 2 * Math.PI);
+          context.fillStyle = 'red';
+          context.fill();
+        }
+      });
+    }
+
+    // Initialize the models
+    async function init() {
+      await loadPoseNet();
+      await loadFaceApi();
+      await setupWebcam();
+    }
+
+    init();
+  </script>
 </body>
 </html>
