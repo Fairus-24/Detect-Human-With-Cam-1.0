@@ -1,7 +1,0 @@
-{
-  "author": "justadudewhohacks",
-  "license": "MIT",
-  "dependencies": {
-    "face-api.js": "../../"
-  }
-}
