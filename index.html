@@ -96,8 +96,8 @@
 
     async function loadFaceApi() {
       try {
-        await faceapi.nets.ssdMobilenetv1.loadFromUri('/models');
-        await faceapi.nets.ageGenderNet.loadFromUri('/models');
+        await faceapi.nets.ssdMobilenetv1.loadFromUri('./models');
+        await faceapi.nets.ageGenderNet.loadFromUri('./models');
         faceApiLoaded = true;
         detectedInfo.textContent = 'FaceAPI model loaded. Waiting for face detection...';
       } catch (err) {
