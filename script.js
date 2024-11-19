@@ -43,12 +43,12 @@ async function loadFaceApi() {
   try {
     // Menggunakan Promise.all untuk memuat semua model sekaligus
     await Promise.all([
-      faceapi.nets.ageGenderNet.loadFromUri('models'),
-      faceapi.nets.ssdMobilenetv1.loadFromUri('models'),
-      faceapi.nets.tinyFaceDetector.loadFromUri('models'),
-      faceapi.nets.faceLandmark68Net.loadFromUri('models'),
-      faceapi.nets.faceRecognitionNet.loadFromUri('models'),
-      faceapi.nets.faceExpressionNet.loadFromUri('models')
+      faceapi.nets.ageGenderNet.loadFromUri('./models'),
+      faceapi.nets.ssdMobilenetv1.loadFromUri('./models'),
+      faceapi.nets.tinyFaceDetector.loadFromUri('./models'),
+      faceapi.nets.faceLandmark68Net.loadFromUri('./models'),
+      faceapi.nets.faceRecognitionNet.loadFromUri('./models'),
+      faceapi.nets.faceExpressionNet.loadFromUri('./models')
     ]);
 
     console.log("All models loaded.");
