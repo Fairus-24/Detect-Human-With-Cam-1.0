@@ -39,17 +39,27 @@ async function loadPoseNet() {
 }
 
 async function loadFaceApi() {
+  console.log("----- START LOAD MODEL ------");
   try {
-    await faceapi.nets.ssdMobilenetv1.loadFromUri('models');
-    await faceapi.nets.ageGenderNet.loadFromUri('models');
+    // Menggunakan Promise.all untuk memuat semua model sekaligus
+    await Promise.all([
+      faceapi.nets.ageGenderNet.loadFromUri('models'),
+      faceapi.nets.ssdMobilenetv1.loadFromUri('models'),
+      faceapi.nets.tinyFaceDetector.loadFromUri('models'),
+      faceapi.nets.faceLandmark68Net.loadFromUri('models'),
+      faceapi.nets.faceRecognitionNet.loadFromUri('models'),
+      faceapi.nets.faceExpressionNet.loadFromUri('models')
+    ]);
 
+    console.log("All models loaded.");
     faceApiLoaded = true;
     detectedInfo.textContent = 'FaceAPI model loaded. Waiting for face detection...';
   } catch (err) {
-    console.error("Error loading FaceAPI: ", err);
+    console.error("Error loading FaceAPI models: ", err);
     detectedInfo.textContent = 'Error loading FaceAPI model.';
   }
 }
+
 
 async function detectPoseAndFace() {
   if (!poseNetModel || !faceApiLoaded) return;
