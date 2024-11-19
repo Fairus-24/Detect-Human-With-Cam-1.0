@@ -96,7 +96,6 @@
 
     async function loadFaceApi() {
       try {
-        // Ganti dengan URL yang sesuai
 await faceapi.nets.ssdMobilenetv1.loadFromUri('./models');
 await faceapi.nets.ageGenderNet.loadFromUri('./models');
 
