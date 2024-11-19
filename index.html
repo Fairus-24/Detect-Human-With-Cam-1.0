@@ -97,8 +97,8 @@
     async function loadFaceApi() {
       try {
         // Ganti dengan URL yang sesuai
-await faceapi.nets.ssdMobilenetv1.loadFromUri('https://github.com/Fairus-24/Detect-Human-With-Cam-1.0/tree/f66785586462d3a60aa284594381722104d9d964/models');
-await faceapi.nets.ageGenderNet.loadFromUri('https://github.com/Fairus-24/Detect-Human-With-Cam-1.0/tree/f66785586462d3a60aa284594381722104d9d964/models');
+await faceapi.nets.ssdMobilenetv1.loadFromUri('https://raw.githubusercontent.com/Fairu-24/Detect-Human-With-Cam-1.0/main/models');
+await faceapi.nets.ageGenderNet.loadFromUri('https://raw.githubusercontent.com/Fairu-24/Detect-Human-With-Cam-1.0/main/models');
 
         faceApiLoaded = true;
         detectedInfo.textContent = 'FaceAPI model loaded. Waiting for face detection...';
