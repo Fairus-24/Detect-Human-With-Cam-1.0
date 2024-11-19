@@ -4,44 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Human Pose and Analysis</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #f4f4f4;
-      flex-direction: column;
-    }
-    #webcam {
-      border: 2px solid black;
-      width: 80%;
-      max-width: 640px;
-      margin-bottom: 20px;
-    }
-    #canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-    h1 {
-      font-size: 24px;
-    }
-    .detected-info {
-      font-size: 18px;
-      margin-top: 20px;
-      padding: 10px;
-      background-color: black;
-      color: white;
-      border-radius: 5px;
-      text-align: center;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <h1>Human Pose and Analysis</h1>
@@ -52,6 +15,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
   <script src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+<<<<<<< HEAD
 
   <script>
     const video = document.getElementById('webcam');
@@ -156,5 +120,8 @@ await faceapi.nets.ageGenderNet.loadFromUri('models');
 
     init();
   </script>
+=======
+  <script src="script.js"></script>
+>>>>>>> b8578ee (Initial commit)
 </body>
 </html>
