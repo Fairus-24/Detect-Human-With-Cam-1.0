@@ -1,5 +1,3 @@
----
-
 # Detect Human With Cam 1.0
 
 **JavaScript/TypeScript Face Detection & Recognition API berbasis TensorFlow.js untuk browser dan Node.js.**
@@ -87,5 +85,3 @@ await Promise.all([
 ## License
 
 Saat ini, repository belum memiliki file lisensi. Silakan tambahkan jika diperlukan.
-
----
